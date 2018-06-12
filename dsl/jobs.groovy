@@ -70,7 +70,7 @@ for (i in 1..4){
 job("MNTLAB-amatiev-child${i}-build-job") {
 	description()
 	keepDependencies(false)
-     label('EPBYMINW2472')
+     label('##PC_MAME##')
   
   
   
