@@ -1,5 +1,5 @@
 def fgradle(String command) {
-    withEnv(["JAVA_HOME=${ tool 'java8' }", "PATH+GRADLE=${tool 'gradle4.6'}/bin"]){sh "gradle ${command}"}
+    withEnv(["JAVA_HOME=${ tool 'jdk' }", "PATH+GRADLE=${tool 'gradle-5.3.1'}"]){sh "gradle ${command}"}
 }
 
 def ereport(String buildStatus, nst) {
@@ -11,7 +11,7 @@ def ereport(String buildStatus, nst) {
              
                   LOG_20: ${log_20}"""
     emailext(
-                    to: 'smart.birdtrap@gmail.com',
+                    to: 'evgenz-mr@ya.ru',
                     attachLog: true,
                     subject: subj,
                     body: body
@@ -20,7 +20,7 @@ def ereport(String buildStatus, nst) {
 
 nstage = ""
 
-node("${SLAVE}"){
+node("master"){
     try {
     stage ('Building code'){
         nstage = env.STAGE_NAME
@@ -46,8 +46,8 @@ node("${SLAVE}"){
     
     stage ('Triggering job and fetching'){
         nstage = env.STAGE_NAME
-        build job: 'MNTLAB-amatiev-child1-build-job', parameters: [[$class: 'StringParameterValue', name: 'GIT_BRANCH', value: 'amatiev']]
-        copyArtifacts filter: '*tar.gz', projectName: 'MNTLAB-amatiev-child1-build-job', selector: lastSuccessful()
+        build job: 'MNTLAB-emrykhin-child1-build-job', parameters: [[$class: 'StringParameterValue', name: 'GIT_BRANCH', value: 'emrykhin']]
+        copyArtifacts filter: '*tar.gz', projectName: 'MNTLAB-emrykhin-child1-build-job', selector: lastSuccessful()
     }
     
     stage ('Packaging and Publishing results'){
@@ -55,7 +55,7 @@ node("${SLAVE}"){
         sh '''
         tar -xzf *tar.gz
         cat output.txt
-        tar -czf pipeline-amatiev-${BUILD_NUMBER}.tar.gz Jenkinsfile jobs.groovy -C ./build/libs mntlab-ci-pipeline.jar
+        tar -czf pipeline-emrykhin-${BUILD_NUMBER}.tar.gz Jenkinsfile jobs.groovy -C ./build/libs mntlab-ci-pipeline.jar
         groovy pushpull.groovy push pipeline-amatiev-${BUILD_NUMBER}.tar.gz'''  
     }
     
@@ -69,7 +69,7 @@ node("${SLAVE}"){
     stage ('Deployment'){
         nstage = env.STAGE_NAME
         sh'''
-        groovy pushpull.groovy pull pipeline-amatiev-${BUILD_NUMBER}.tar.gz
+        groovy pushpull.groovy pull pipeline-emrykhin-${BUILD_NUMBER}.tar.gz
         rm -rf *.jar
         tar -xzf *tar.gz
         java -jar *.jar'''
