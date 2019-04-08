@@ -1,3 +1,0 @@
-<build>
-    <finalName>$\{project.artifactId}-$\{project.version}-r$\{buildNumber}</finalName>
-</build>
