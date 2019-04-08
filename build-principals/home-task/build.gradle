@@ -1,0 +1,34 @@
+apply plugin: 'java'
+version = b_num
+dependencies {
+	repositories {
+		mavenCentral()
+	}
+
+    compile group: 'commons-collections', name: 'commons-collections', version: '3.2'
+    testCompile group: 'junit', name: 'junit', version: '4.8.2'
+    compile group: 'log4j', name:'log4j', version: '1.2.17'
+
+}
+
+task wrapper(type: Wrapper) {
+	gradleVersion = '4.0'
+}
+
+jar {
+    manifest {
+	attributes('Implementation-Title': "Hello MNT",
+                   'Implementation-Version': "1.0",
+                   'Main-Class': "com.test.Project",
+	           'Fw-Version': version)
+  }
+	baseName 'hello'
+}
+
+task hello (dependsOn: test) {
+	doLast {
+		println "Hello message from task hello"
+		}
+}
+
+test.dependsOn assemble
